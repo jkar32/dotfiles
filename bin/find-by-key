@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -e
+
+main () {
+  key="$1"
+  jq "recurse(to_entries[].value | objects) | select(has(\"$key\")).$key"
+}
+
+main "$@"

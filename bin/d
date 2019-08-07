@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+set -e
+
+main () {
+  local cmd="$1"; shift || :
+  if [ "$cmd" == "" ]; then
+    docker ps
+    exit
+  fi
+  case "$cmd" in
+    clean)
+      mapfile -t containers < <(docker ps -qa)
+      if (( ${#containers[@]} > 0 )); then
+        docker rm -f "${containers[@]}"
+      fi
+      docker images | grep '<none>' | awk '{print $3}' | xargs docker rmi
+      ;;
+    l)
+      docker logs -f "$@"
+      ;;
+    e)
+      if [[ $1 == "-u" ]]; then
+        local user_args="$1 $2"; shift 2
+      else
+        local user_args=""
+      fi
+      local container="$1"; shift
+      local cmd="${*-bash}"
+      docker exec -it $user_args "$container" "$cmd"
+      ;;
+    i)
+      local container="$1"
+      local key="$2"
+      if [ "$key" == "" ]; then
+        docker inspect "$container" | jq .
+      else
+        docker inspect "$container" | jq '.[]' | find-by-key "$key"
+      fi
+      ;;
+    up|down)
+      docker-compose "$cmd" "$@"
+      ;;
+    *)
+      docker "$cmd" "$@"
+      ;;
+  esac
+}
+
+main "$@"

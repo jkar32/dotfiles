@@ -1,0 +1,31 @@
+[user]
+	name = RobbieClarken
+	email = robbie.clarken@gmail.com
+[color]
+	ui = true
+[core]
+	excludesfile = ~/.dotfiles/git/gitignore_global
+[alias]
+	ll = log --date=short --format=format:'%C(auto)%h%C(reset) %C(cyan)%ad%C(reset) %C(green)(%ar)%C(reset)%C(auto)%d%C(reset) %s - %C(yellow)%an%C(reset)'
+	l = !git ll --all --graph
+	df = diff --word-diff --color-words
+	dfc = diff --word-diff --color-words --cached
+	co = checkout
+	cm = commit -v
+	cma = commit -v --amend
+	ph = push -u origin HEAD
+	pf = push --force-with-lease
+	sml = submodule foreach git log --oneline --decorate --graph -n 1
+	cmi = commit -m 'Initial commit'
+[pull]
+	rebase = true
+[fetch]
+	prune = true
+[merge]
+	ff = only
+[push]
+	default = simple
+[diff "sopsdiffer"]
+	textconv = sops -d
+[url "https://"]
+	insteadOf = git://
